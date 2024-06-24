@@ -19,8 +19,7 @@ local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 
-local function Teleport(cooldown)
-    wait(cooldown)
+local function Teleport()
     local player = Players.LocalPlayer
     if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         player.Character.HumanoidRootPart.CFrame = CFrame.new(4475.07324, 216.284943, 2372.44287, -0.114426658, 1.66275598e-08, 0.993431687, 3.32588144e-08, 1, -1.29066384e-08, -0.993431687, 3.15634949e-08, -0.114426658)
@@ -56,26 +55,39 @@ local function AutoSkill()
     end
 end
 
-spawn(function()
-        while task.wait() do
-            if _G.Setting.Start then
-                if _G.Setting.SetTeleport then
-                    pcall(function()
-                        Teleport(0.01)
-                    end)
-                end
-                if _G.Setting.AutoEquip then
-                    pcall(function()
-                        Equip()
-                    end)
-                end
-                if _G.Setting.AutoSkill then
-                    AutoSkill()
-                end
-                if _G.Setting.InstantKill then
-                    InstantKill(_G.Setting.TargetOne)
-                    InstantKill(_G.Setting.TargetTwo)
-                end  
-            end
+local function OnCharacterAdded(character)
+    character:WaitForChild("HumanoidRootPart")
+    if _G.Setting.SetTeleport then
+        Teleport()
+    end
+end
+
+local function SetupPlayer(player)
+    player.CharacterAdded:Connect(OnCharacterAdded)
+    if player.Character then
+        OnCharacterAdded(player.Character)
+    end
+end
+
+Players.PlayerAdded:Connect(SetupPlayer)
+for _, player in pairs(Players:GetPlayers()) do
+    SetupPlayer(player)
+end
+
+while task.wait() do
+    if _G.Setting.Start then
+        if _G.Setting.SetTeleport then
+            Teleport()
         end
-end)
+        if _G.Setting.AutoEquip then
+            Equip()
+        end
+        if _G.Setting.AutoSkill then
+            AutoSkill()
+        end
+        if _G.Setting.InstantKill then
+            InstantKill(_G.Setting.TargetOne)
+            InstantKill(_G.Setting.TargetTwo)
+        end  
+    end
+end
