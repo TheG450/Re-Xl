@@ -26,14 +26,6 @@ local function Teleport()
     end
 end
 
-local function InstantKill(TargetName)
-    for _, v in pairs(Workspace.Live:GetDescendants()) do
-        if v.Name == TargetName and v:FindFirstChild("Humanoid") and v.Humanoid.Health < v.Humanoid.MaxHealth then
-            v.Humanoid.Health = 0
-        end
-    end
-end
-
 local function Equip()
     local player = Players.LocalPlayer
     local Character = player.Character
@@ -74,20 +66,32 @@ for _, player in pairs(Players:GetPlayers()) do
     SetupPlayer(player)
 end
 
-while task.wait() do
-    if _G.Setting.Start then
-        if _G.Setting.SetTeleport then
-            Teleport()
+spawn(function()
+    while task.wait() do
+        if _G.Setting.Start then
+            if _G.Setting.SetTeleport then
+                Teleport()
+            end
+            if _G.Setting.AutoEquip then
+                Equip()
+            end
+            if _G.Setting.AutoSkill then
+                AutoSkill()
+            end
         end
-        if _G.Setting.AutoEquip then
-            Equip()
-        end
-        if _G.Setting.AutoSkill then
-            AutoSkill()
-        end
+    end
+end)
+spawn(function()
+    while wait() do
         if _G.Setting.InstantKill then
-            InstantKill(_G.Setting.TargetOne)
-            InstantKill(_G.Setting.TargetTwo)
+            for _, v in pairs(Workspace.Live:GetDescendants()) do
+                if v.Name == _G.Setting.TargetOne and v:FindFirstChild("Humanoid") and v.Humanoid.Health < v.Humanoid.MaxHealth then
+                    v.Humanoid.Health = 0
+                end
+                if v.Name == _G.Setting.TargetTwo and v:FindFirstChild("Humanoid") and v.Humanoid.Health < v.Humanoid.MaxHealth then
+                    v.Humanoid.Health = 0
+                end
+            end
         end  
     end
-end
+end)
