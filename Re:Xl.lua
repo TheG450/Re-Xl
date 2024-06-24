@@ -57,14 +57,17 @@ local function AutoSkill()
 end
 
 spawn(function()
-    pcall(function()
         while task.wait() do
             if _G.Setting.Start then
                 if _G.Setting.SetTeleport then
-                    Teleport(0.01)
+                    pcall(function()
+                        Teleport(0.01)
+                    end)
                 end
                 if _G.Setting.AutoEquip then
-                    Equip()
+                    pcall(function()
+                        Equip()
+                    end)
                 end
                 if _G.Setting.AutoSkill then
                     AutoSkill()
@@ -75,5 +78,4 @@ spawn(function()
                 end  
             end
         end
-    end)
 end)
