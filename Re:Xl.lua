@@ -56,20 +56,24 @@ local function AutoSkill()
     end
 end
 
-while task.wait() do
-    if _G.Setting.Start then
-        if _G.Setting.SetTeleport then
-            Teleport(0.01)
+spawn(function()
+    pcall(function()
+        while task.wait() do
+            if _G.Setting.Start then
+                if _G.Setting.SetTeleport then
+                    Teleport(0.01)
+                end
+                if _G.Setting.AutoEquip then
+                    Equip()
+                end
+                if _G.Setting.AutoSkill then
+                    AutoSkill()
+                end
+                if _G.Setting.InstantKill then
+                    InstantKill(_G.Setting.TargetOne)
+                    InstantKill(_G.Setting.TargetTwo)
+                end  
+            end
         end
-        if _G.Setting.AutoEquip then
-            Equip()
-        end
-        if _G.Setting.AutoSkill then
-            AutoSkill()
-        end
-        if _G.Setting.InstantKill then
-            InstantKill(_G.Setting.TargetOne)
-            InstantKill(_G.Setting.TargetTwo)
-        end  
-    end
-end
+    end)
+end)
